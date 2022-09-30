@@ -23,6 +23,13 @@ class App extends Component {
       faceBox: {},
       route: "signed-out",
       isSignedIn: false,
+      user: {
+        id: "",
+        name: "",
+        email: "",
+        score: 0,
+        joined: "",
+      },
     };
   }
 
@@ -38,6 +45,10 @@ class App extends Component {
       rightCol: width - clarifaiFace.right_col * width,
       bottomRow: height - clarifaiFace.bottom_row * height,
     };
+  };
+
+  loadUser = (user) => {
+    this.setState({ user });
   };
 
   displayFaceBox = (faceBox) => {
@@ -58,18 +69,32 @@ class App extends Component {
   };
 
   onDetect = () => {
-    const { linkInput } = this.state;
+    const { linkInput, user } = this.state;
+    const { id } = user;
     this.setState({ imageUrl: linkInput });
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, linkInput)
       // '53e1df302c079b3db8a0a36033ed2d15' <- alternative model if face_detect_model happens to be down
-      .then((response) => this.calculateFaceBoxLocation(response))
+      .then((response) => {
+        if (response) {
+          fetch("http://localhost:3001/image", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+          })
+            .then((response) => response.json())
+            .then((score) => {
+              this.setState(Object.assign(this.state.user, { score }));
+            });
+        }
+        return this.calculateFaceBoxLocation(response);
+      })
       .then((faceBox) => this.displayFaceBox(faceBox))
       .catch((error) => console.log(error));
   };
 
   render() {
-    const { imageUrl, faceBox, route, isSignedIn } = this.state;
+    const { imageUrl, faceBox, route, isSignedIn, user } = this.state;
     return (
       <>
         <ParticlesBg type="cobweb" color="#eeeeee" num={100} />
@@ -80,7 +105,7 @@ class App extends Component {
         {route === "home" ? (
           <>
             <Logo />
-            <Rank />
+            <Rank userName={user.name} userScore={user.score} />
             <ImageLinkForm
               onDetect={this.onDetect}
               onLinkInputChange={this.onLinkInputChange}
@@ -88,9 +113,12 @@ class App extends Component {
             <FaceRecognition faceBox={faceBox} imageUrl={imageUrl} />
           </>
         ) : route === "signed-out" ? (
-          <SignIn onRouteChange={this.onRouteChange} />
+          <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         ) : (
-          <Register onRouteChange={this.onRouteChange} />
+          <Register
+            onRouteChange={this.onRouteChange}
+            loadUser={this.loadUser}
+          />
         )}
       </>
     );
