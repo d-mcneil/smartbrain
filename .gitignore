@@ -5,7 +5,8 @@
 /.pnp
 .pnp.js
 
-src/apiKey.js
+smartbrainAPI/databaseInfo.js
+smartbrainAPI/controllers/apiKey.js
 
 # testing
 /coverage
