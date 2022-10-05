@@ -1,7 +1,6 @@
 import React from "react";
-import "./FaceRecognition.css";
 
-const FaceRecognition = ({ imageUrl, faceBox }) => {
+const FaceRecognition = ({ imageUrl, faceBoxes }) => {
   if (imageUrl) {
     return (
       <div className="justify-content-center ma">
@@ -13,15 +12,20 @@ const FaceRecognition = ({ imageUrl, faceBox }) => {
             width="500px"
             height="auto"
           ></img>
-          <div
-            className="bounding-box"
-            style={{
-              left: faceBox.leftCol,
-              top: faceBox.topRow,
-              right: faceBox.rightCol,
-              bottom: faceBox.bottomRow,
-            }}
-          ></div>
+          {faceBoxes.map((faceBox) => {
+            return (
+              <div
+                className="bounding-box"
+                style={{
+                  left: faceBox.leftCol,
+                  top: faceBox.topRow,
+                  right: faceBox.rightCol,
+                  bottom: faceBox.bottomRow,
+                }}
+                key={`left:${faceBox.leftCol}_top:${faceBox.topRow}_right:${faceBox.rightCol}_bottom:${faceBox.bottomRow}`}
+              ></div>
+            );
+          })}
         </div>
       </div>
     );

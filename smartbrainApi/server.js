@@ -1,89 +1,95 @@
 import express from "express";
 import cors from "cors";
+import knex from "knex";
+import bcrypt from "bcryptjs";
+import handleRegister from "./controllers/register.js"; 
+import handleProfile from "./controllers/profile.js";
+import handleScore from "./controllers/score.js";
+import handleSignIn from "./controllers/signIn.js";
+import handleApiCall from "./controllers/apiCall.js";
+import databaseInfo from "./databaseInfo.js";
+
+const db = knex(databaseInfo);
 
 const app = express();
 
-const database = {
-  users: [
-    {
-      id: "0",
-      name: "john",
-      email: "john@john.john",
-      password: "johnnyboy",
-      score: 0,
-      joined: new Date(),
-    },
-    {
-      id: "1",
-      name: "sally",
-      email: "sally@sally.sally",
-      password: "sallygirl",
-      score: 0,
-      joined: new Date(),
-    },
-  ],
-};
-
-// app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.json(database.users);
-});
+app.get("/", (req, res) => res.json("all is good"));
 
-app.post("/sign-in", (req, res) => {
-  if (
-    req.body.email === database.users[0].email &&
-    req.body.password === database.users[0].password
-  ) {
-    res.json(database.users[0]);
-  } else {
-    res.status(400).json("failure");
-  }
-});
+app.post("/sign-in", (req, res) => {handleSignIn(req, res, db, bcrypt)})
+// app.post("/sign-in", (req, res) => {
+//   const { email, password } = req.body;
+//   db.select('hash').from('login').where({email})
+//     .then(data => {
+//       if (data.length){
+//         return bcrypt.compare(password, data[0].hash);
+//       } else {
+//         return false;
+//       }
+//     }).then(isValidPassword => {
+//       if (isValidPassword) {
+//         db.select('*').from('users').where({email})
+//           .then(user => res.json(user[0]))
+//           .catch(err => res.status(400).json("Error logging in user."));
+//       } else {
+//         res.json("That combination of email and password is not valid.");
+//       }
+//     }).catch(err => res.status(400).json("Error logging in user."));
+// });
 
-app.post("/register", (req, res) => {
-  const { name, email, password } = req.body;
-  database.users.push({
-    name: name,
-    // password: password,
-    email: email,
-    score: 0,
-    joined: new Date(),
-    id: database.users.length,
-  });
-  res.json(database.users[database.users.length - 1]);
-});
+app.post("/register", (req, res) => {handleRegister(req, res, db, bcrypt)})
+// app.post("/register", (req, res) => {
+//   const { name, email, password } = req.body;
+//   bcrypt.genSalt(10, function(err, salt) {
+//     if (!err) {
+//       bcrypt.hash(password, salt, function(err, hash) {
+//         if (!err) {
+//           db.transaction(trx => {
+//             trx.insert({email, hash}).into('login').returning('id').then(data => 
+//               trx("users").insert({
+//                 id: data[0].id,
+//                 email: email,
+//                 name: name,
+//                 joined: new Date()
+//               }).returning('*').then(user => res.json(user[0]))
+//             ).then(trx.commit).catch(trx.rollback)
+//           }).catch(err => res.status(400).json("unable to register new user"));
+//         } else {
+//           res.status(400).json("unable to register new user")
+//         }
+//       });
+//     } else {
+//       res.status(400).json("unable to register new user")
+//     }
+//   });
+// });
 
-app.get("/profile/:id", (req, res) => {
-  const { id } = req.params;
-  let found = false;
-  database.users.forEach((user) => {
-    if (user.id === id) {
-      found = true;
-      return res.json(user);
-    }
-  });
-  if (!found) {
-    res.status(400).json("user not found");
-  }
-});
+app.get("/profile/:id", (req, res) => {handleProfile(res, req, db)});
+// app.get("/profile/:id", (req, res) => {
+//   db.select('*').from('users').where({id: req.params.id})
+//   .then(user => {
+//     if (user.length) {
+//       res.json(user[0]);
+//     } else {
+//       res.status(400).json("user not found");
+//     }
+// })
+//   .catch(err => res.status(400).json("error fetching user data"));
+// })
 
-app.put("/image", (req, res) => {
-  const { id } = req.body;
-  let found = false;
-  database.users.forEach((user) => {
-    if (user.id === id) {
-      found = true;
-      user.score++;
-      return res.json(user.score);
-    }
-  });
-  if (!found) {
-    res.status(400).json("user not found");
-  }
-});
+app.put("/score", (req, res) => {handleScore(req, res, db)});
+// app.put("/image", (req, res) => {
+//   db('users').where({id: req.body.id})
+//   .increment('score', 1)
+//   .returning('score')
+//   .then(array => res.json(array[0].score))
+//   .catch(err => res.status(400).json("error fetching score data"));
+//   }
+// );
+
+app.post("/image", (req, res) => {handleApiCall(req, res)});
 
 app.listen(3001, () => {
   console.log("SmartBrain is running on port 3001.");

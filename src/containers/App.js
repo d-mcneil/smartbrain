@@ -1,18 +1,27 @@
 import React, { Component } from "react";
-import Clarifai from "clarifai";
 import ParticlesBg from "particles-bg";
 import SignIn from "../components/SignIn/SignIn";
 import Register from "../components/Register/Register";
 import Navigation from "../components/Navigation/Navigation";
-import Logo from "../components/Logo/Logo";
 import Rank from "../components/Rank/Rank";
 import ImageLinkForm from "../components/ImageLinkForm/ImageLinkForm";
 import FaceRecognition from "../components/FaceRecognition/FaceRecognition";
-import apiKey from "../apiKey";
 
-const app = new Clarifai.App({ apiKey });
-
-// https://samples.clarifai.com/face-det.jpg
+const initialState = {
+  linkInput: "",
+  imageUrl: "",
+  faceBoxes: [],
+  route: "signed-out",
+  isSignedIn: false,
+  user: {
+    id: "",
+    name: "",
+    email: "",
+    score: 0,
+    rank: 0,
+    joined: "",
+  },
+};
 
 class App extends Component {
   constructor() {
@@ -20,7 +29,7 @@ class App extends Component {
     this.state = {
       linkInput: "",
       imageUrl: "",
-      faceBox: {},
+      faceBoxes: [],
       route: "signed-out",
       isSignedIn: false,
       user: {
@@ -28,31 +37,38 @@ class App extends Component {
         name: "",
         email: "",
         score: 0,
+        rank: 0,
         joined: "",
       },
     };
   }
 
-  calculateFaceBoxLocation = (response) => {
-    const clarifaiFace =
-      response.outputs[0].data.regions[0].region_info.bounding_box;
+  calculateFaceBoxLocations = (response) => {
+    const regions = response.outputs[0].data.regions;
+    if (!regions) {
+      return [];
+    }
     const image = document.getElementById("input-image");
     const width = Number(image.width);
     const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height,
-    };
+    const faceBoxes = regions.map((region) => {
+      const clarifaiFace = region.region_info.bounding_box;
+      return {
+        leftCol: clarifaiFace.left_col * width,
+        topRow: clarifaiFace.top_row * height,
+        rightCol: width - clarifaiFace.right_col * width,
+        bottomRow: height - clarifaiFace.bottom_row * height,
+      };
+    });
+    return faceBoxes;
   };
 
   loadUser = (user) => {
     this.setState({ user });
   };
 
-  displayFaceBox = (faceBox) => {
-    this.setState({ faceBox });
+  displayFaceBoxes = (faceBoxes) => {
+    this.setState({ faceBoxes });
   };
 
   onLinkInputChange = (event) => {
@@ -61,7 +77,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === "signed-out") {
-      this.setState({ isSignedIn: false });
+      this.setState(initialState);
     } else if (route === "home") {
       this.setState({ isSignedIn: true });
     }
@@ -71,46 +87,58 @@ class App extends Component {
   onDetect = () => {
     const { linkInput, user } = this.state;
     const { id } = user;
-    this.setState({ imageUrl: linkInput });
-    app.models
-      .predict(Clarifai.FACE_DETECT_MODEL, linkInput)
-      // '53e1df302c079b3db8a0a36033ed2d15' <- alternative model if face_detect_model happens to be down
-      .then((response) => {
-        if (response) {
-          fetch("http://localhost:3001/image", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id }),
-          })
-            .then((response) => response.json())
-            .then((score) => {
-              this.setState(Object.assign(this.state.user, { score }));
-            });
+    this.setState({ imageUrl: linkInput, faceBoxes: [] });
+    fetch("http://localhost:3001/image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ linkInput }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          if (data.outputs[0].data.regions) {
+            fetch("http://localhost:3001/score", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                id: id,
+                score: data.outputs[0].data.regions.length,
+              }),
+            })
+              .then((response) => response.json())
+              .then((score) => {
+                this.setState(Object.assign(this.state.user, { score }));
+              });
+          }
         }
-        return this.calculateFaceBoxLocation(response);
+        return this.calculateFaceBoxLocations(data);
       })
-      .then((faceBox) => this.displayFaceBox(faceBox))
+      .then((faceBoxes) => this.displayFaceBoxes(faceBoxes))
       .catch((error) => console.log(error));
   };
 
   render() {
-    const { imageUrl, faceBox, route, isSignedIn, user } = this.state;
+    const { imageUrl, faceBoxes, route, isSignedIn, user } = this.state;
     return (
       <>
         <ParticlesBg type="cobweb" color="#eeeeee" num={100} />
         <Navigation
           onRouteChange={this.onRouteChange}
           isSignedIn={isSignedIn}
+          route={route}
         />
         {route === "home" ? (
           <>
-            <Logo />
-            <Rank userName={user.name} userScore={user.score} />
+            <Rank
+              userName={user.name}
+              userScore={user.score}
+              userRank={user.rank}
+            />
             <ImageLinkForm
               onDetect={this.onDetect}
               onLinkInputChange={this.onLinkInputChange}
             />
-            <FaceRecognition faceBox={faceBox} imageUrl={imageUrl} />
+            <FaceRecognition faceBoxes={faceBoxes} imageUrl={imageUrl} />
           </>
         ) : route === "signed-out" ? (
           <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
