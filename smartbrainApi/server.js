@@ -8,6 +8,7 @@ import handleScore from "./controllers/score.js";
 import handleSignIn from "./controllers/signIn.js";
 import handleApiCall from "./controllers/apiCall.js";
 import databaseInfo from "./databaseInfo.js";
+import handleDelete from "./controllers/delete.js"; 
 
 const db = knex(databaseInfo);
 const app = express();
@@ -21,6 +22,7 @@ app.post("/register", (req, res) => {handleRegister(req, res, db, bcrypt)});
 app.get("/profile/:id", (req, res) => {handleProfile(res, req, db)});
 app.put("/score", (req, res) => {handleScore(req, res, db)});
 app.post("/image", (req, res) => {handleApiCall(req, res)});
+app.delete("/delete", (req, res) => {handleDelete(req, res, db)});
 
 app.listen(3001, () => {
   console.log("SmartBrain is running on port 3001.");

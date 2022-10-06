@@ -14,6 +14,6 @@ const handleApiCall = (req, res) => {
         // '53e1df302c079b3db8a0a36033ed2d15' <- alternative model if face_detect_model happens to be down
         .then(data => res.json(data))
         .catch(err => res.status(400).json('error scanning image'));
-    };
+};
 
 export default handleApiCall;

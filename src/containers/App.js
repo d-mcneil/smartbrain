@@ -6,6 +6,7 @@ import Navigation from "../components/Navigation";
 import Rank from "../components/Rank";
 import ImageLinkForm from "../components/ImageLinkForm";
 import FaceRecognition from "../components/FaceRecognition";
+import Profile from "../components/Profile";
 
 const initialState = {
   linkInput: "",
@@ -13,6 +14,7 @@ const initialState = {
   faceBoxes: [],
   route: "signed-out",
   isSignedIn: false,
+  deleteUserError: "",
   user: {
     id: "",
     name: "",
@@ -32,6 +34,7 @@ class App extends Component {
       faceBoxes: [],
       route: "signed-out",
       isSignedIn: false,
+      deleteUserError: "",
       user: {
         id: "",
         name: "",
@@ -42,6 +45,25 @@ class App extends Component {
       },
     };
   }
+
+  onDeleteUser = (email) => {
+    fetch("http://localhost:3001/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data === "user deleted") {
+          this.setState(initialState);
+        } else {
+          this.setState({ deleteUserError: data });
+        }
+      })
+      .catch((err) =>
+        this.setState({ deleteUserError: "Error deleting user: 1" })
+      );
+  };
 
   calculateFaceBoxLocations = (response) => {
     const regions = response.outputs[0].data.regions;
@@ -79,7 +101,7 @@ class App extends Component {
     if (route === "signed-out") {
       this.setState(initialState);
     } else if (route === "home") {
-      this.setState({ isSignedIn: true });
+      this.setState({ isSignedIn: true, deleteUserError: "" });
     }
     this.setState({ route });
   };
@@ -123,7 +145,9 @@ class App extends Component {
   };
 
   render() {
-    const { imageUrl, faceBoxes, route, isSignedIn, user } = this.state;
+    const { imageUrl, faceBoxes, route, isSignedIn, user, deleteUserError } =
+      this.state;
+    console.log(user);
     return (
       <>
         <ParticlesBg type="cobweb" color="#eeeeee" num={100} />
@@ -146,6 +170,12 @@ class App extends Component {
             />
             <FaceRecognition faceBoxes={faceBoxes} imageUrl={imageUrl} />
           </>
+        ) : route === "profile" ? (
+          <Profile
+            user={user}
+            onDeleteUser={this.onDeleteUser}
+            error={deleteUserError}
+          />
         ) : route === "signed-out" ? (
           <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         ) : (

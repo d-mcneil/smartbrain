@@ -6,7 +6,7 @@ const Rank = ({ userName, userScore, userRank }) => {
       <div className="white f3 mt3">{`${userName}, your current score is...`}</div>
       <div className="white f1">{`${userScore}`}</div>
       <hr style={{ width: "700px", maxWidth: "85vw" }}></hr>
-      <div className="white f3">Your rank out of all users is...</div>
+      <div className="white f3">{"Your rank out of all users is..."}</div>
       <div className="white f1">{`${userRank}`}</div>
     </>
   );

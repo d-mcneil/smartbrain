@@ -110,9 +110,7 @@ class Register extends Component {
             </div>
             {error ? (
               <div className="lh-copy mt3">
-                <p className="b mb0 f6 pt2 link dim black db pointer">
-                  {error}
-                </p>
+                <p className="b mb0 f6 pt2 link black db">{error}</p>
               </div>
             ) : (
               <></>
