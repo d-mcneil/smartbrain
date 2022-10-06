@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import ParticlesBg from "particles-bg";
-import SignIn from "../components/SignIn/SignIn";
-import Register from "../components/Register/Register";
-import Navigation from "../components/Navigation/Navigation";
-import Rank from "../components/Rank/Rank";
-import ImageLinkForm from "../components/ImageLinkForm/ImageLinkForm";
-import FaceRecognition from "../components/FaceRecognition/FaceRecognition";
+import SignIn from "../components/SignIn";
+import Register from "../components/Register";
+import Navigation from "../components/Navigation";
+import Rank from "../components/Rank";
+import ImageLinkForm from "../components/ImageLinkForm";
+import FaceRecognition from "../components/FaceRecognition";
 
 const initialState = {
   linkInput: "",
@@ -106,15 +106,20 @@ class App extends Component {
               }),
             })
               .then((response) => response.json())
-              .then((score) => {
-                this.setState(Object.assign(this.state.user, { score }));
+              .then((obj) => {
+                this.setState(
+                  Object.assign(this.state.user, { score: obj.score })
+                );
+                this.setState(
+                  Object.assign(this.state.user, { rank: obj.rank })
+                );
               });
           }
         }
         return this.calculateFaceBoxLocations(data);
       })
       .then((faceBoxes) => this.displayFaceBoxes(faceBoxes))
-      .catch((error) => console.log(error));
+      .catch((err) => console.log("error fetching image or score data"));
   };
 
   render() {
@@ -137,6 +142,7 @@ class App extends Component {
             <ImageLinkForm
               onDetect={this.onDetect}
               onLinkInputChange={this.onLinkInputChange}
+              score={user.score}
             />
             <FaceRecognition faceBoxes={faceBoxes} imageUrl={imageUrl} />
           </>

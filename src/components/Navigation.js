@@ -1,10 +1,8 @@
 import React from "react";
-import Logo from "../Logo/Logo";
+import Logo from "./Logo/Logo";
 
 const Navigation = ({ onRouteChange, isSignedIn, route }) => {
-  // if (isSignedIn) {
   return (
-    // <nav style={{ display: "flex", justifyContent: "flex-end" }}>
     <nav style={{ display: "flex" }}>
       <Logo />
       {isSignedIn ? (
@@ -32,6 +30,5 @@ const Navigation = ({ onRouteChange, isSignedIn, route }) => {
     </nav>
   );
 };
-// };
 
 export default Navigation;

@@ -9,7 +9,8 @@ const FaceRecognition = ({ imageUrl, faceBoxes }) => {
             id="input-image"
             src={imageUrl}
             alt="How many faces are in this?"
-            width="500px"
+            width="320px"
+            style={{ maxWidth: "320px" }}
             height="auto"
           ></img>
           {faceBoxes.map((faceBox) => {
