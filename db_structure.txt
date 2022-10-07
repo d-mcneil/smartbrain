@@ -1,20 +1,5 @@
-users table
-
-from the video-ish:
-CREATE TABLE users (id SERIAL NOT NULL PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, score INTEGER DEFAULT 0, joined TIMESTAMP NOT NULL);
-
-i thought it made more sense to take one id from the other table, so i got rid of the serialization - also added time zone to time stamp
-THIS IS THE ONE I USED IN THE APP:
+users
 CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, score INTEGER DEFAULT 0, joined TIMESTAMPTZ NOT NULL);
 
-
-
-
-login table
-
-from the video-ish:
-CREATE TABLE login (id SERIAL NOT NULL PRIMARY KEY, hash VARCHAR(255) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL);
-
-setting hash to fixed length
-THIS IS THE ONE I USED IN THE APP:
+login
 CREATE TABLE login (id SERIAL NOT NULL PRIMARY KEY, hash CHAR(60) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL);
