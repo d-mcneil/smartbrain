@@ -1,0 +1,20 @@
+{
+  "short_name": "SmartBrain",
+  "name": "SmartBrain Face Detection",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ff5edf",
+  "background_color": "#ff5edf"
+}

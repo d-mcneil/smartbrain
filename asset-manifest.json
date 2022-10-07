@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/smartbrain-face-detection/static/css/main.cf7e0f2a.css",
+    "main.js": "/smartbrain-face-detection/static/js/main.bbd69c00.js",
+    "static/js/787.97a96b3a.chunk.js": "/smartbrain-face-detection/static/js/787.97a96b3a.chunk.js",
+    "index.html": "/smartbrain-face-detection/index.html",
+    "main.cf7e0f2a.css.map": "/smartbrain-face-detection/static/css/main.cf7e0f2a.css.map",
+    "main.bbd69c00.js.map": "/smartbrain-face-detection/static/js/main.bbd69c00.js.map",
+    "787.97a96b3a.chunk.js.map": "/smartbrain-face-detection/static/js/787.97a96b3a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.cf7e0f2a.css",
+    "static/js/main.bbd69c00.js"
+  ]
+}
