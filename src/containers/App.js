@@ -148,7 +148,6 @@ class App extends Component {
   render() {
     const { imageUrl, faceBoxes, route, isSignedIn, user, deleteUserError } =
       this.state;
-    console.log(user);
     return (
       <>
         <ParticlesBg type="cobweb" color="#eeeeee" num={100} />
