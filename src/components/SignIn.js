@@ -27,7 +27,7 @@ class SignIn extends Component {
   onSubmit = () => {
     const { password, email } = this.state;
     const { onRouteChange, loadUser } = this.props;
-    fetch("http://localhost:3001/sign-in", {
+    fetch("https://secure-tor-52555.herokuapp.com/sign-in", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password, email }),

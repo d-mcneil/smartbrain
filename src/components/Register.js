@@ -32,7 +32,7 @@ class Register extends Component {
   onSubmit = () => {
     const { onRouteChange, loadUser } = this.props;
     const { password, email, name } = this.state;
-    fetch("http://localhost:3001/register", {
+    fetch("https://secure-tor-52555.herokuapp.com/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password, email, name }),

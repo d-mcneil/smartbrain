@@ -47,7 +47,7 @@ class App extends Component {
   }
 
   onDeleteUser = (email) => {
-    fetch("http://localhost:3001/delete", {
+    fetch("https://secure-tor-52555.herokuapp.com/delete", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -110,7 +110,7 @@ class App extends Component {
     const { linkInput, user } = this.state;
     const { id } = user;
     this.setState({ imageUrl: linkInput, faceBoxes: [] });
-    fetch("http://localhost:3001/image", {
+    fetch("https://secure-tor-52555.herokuapp.com/image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ linkInput }),
@@ -119,7 +119,7 @@ class App extends Component {
       .then((data) => {
         if (data) {
           if (data.outputs[0].data.regions) {
-            fetch("http://localhost:3001/score", {
+            fetch("https://secure-tor-52555.herokuapp.com/score", {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
