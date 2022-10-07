@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import mainUrl from "../mainUrl";
 
 class Register extends Component {
   constructor(props) {
@@ -32,7 +33,7 @@ class Register extends Component {
   onSubmit = () => {
     const { onRouteChange, loadUser } = this.props;
     const { password, email, name } = this.state;
-    fetch("https://secure-tor-52555.herokuapp.com/register", {
+    fetch(`${mainUrl}/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password, email, name }),

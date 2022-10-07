@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import mainUrl from "../mainUrl";
 
 class SignIn extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class SignIn extends Component {
   onSubmit = () => {
     const { password, email } = this.state;
     const { onRouteChange, loadUser } = this.props;
-    fetch("https://secure-tor-52555.herokuapp.com/sign-in", {
+    fetch(`${mainUrl}/sign-in`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password, email }),

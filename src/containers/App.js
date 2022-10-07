@@ -7,6 +7,7 @@ import Rank from "../components/Rank";
 import ImageLinkForm from "../components/ImageLinkForm";
 import FaceRecognition from "../components/FaceRecognition";
 import Profile from "../components/Profile";
+import mainUrl from "../mainUrl";
 
 const initialState = {
   linkInput: "",
@@ -47,7 +48,7 @@ class App extends Component {
   }
 
   onDeleteUser = (email) => {
-    fetch("https://secure-tor-52555.herokuapp.com/delete", {
+    fetch(`${mainUrl}/delete`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -110,7 +111,7 @@ class App extends Component {
     const { linkInput, user } = this.state;
     const { id } = user;
     this.setState({ imageUrl: linkInput, faceBoxes: [] });
-    fetch("https://secure-tor-52555.herokuapp.com/image", {
+    fetch(`${mainUrl}/image`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ linkInput }),
@@ -119,7 +120,7 @@ class App extends Component {
       .then((data) => {
         if (data) {
           if (data.outputs[0].data.regions) {
-            fetch("https://secure-tor-52555.herokuapp.com/score", {
+            fetch(`${mainUrl}/score`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
