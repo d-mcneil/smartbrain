@@ -14,7 +14,9 @@ const ImageLinkForm = ({ onLinkInputChange, onDetect, score }) => {
           <></>
         ) : (
           <p className="f3">
-            {"This SmartBrain will detect faces in pictures. Give it a try!"}
+            {
+              "This SmartBrain can detect faces; submit an image URL and give it a try!"
+            }
           </p>
         )}
 
