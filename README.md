@@ -1,4 +1,4 @@
-<h1 align="center">SmartBrain Face Detection </h1>
+<h1 align="center">SmartBrain Face Detection</h1>
 
 Developed a full-stack web application with responsive design using **React**, **Node**, **Express**, and **PostgreSQL** as part of Zero to Mastery Academy’s Complete Web Developer curriculum. Integrated Clarifai's API to detect faces in images, the user’s total score is increased, and their rank is displayed compared to all SmartBrain users
 ---
